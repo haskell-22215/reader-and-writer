@@ -3,22 +3,33 @@ module Tier0.Reader (Environment (..), EnvironmentM, formatUserName, formatHost,
 import Control.Monad.Reader
 
 data Environment = Environment
-  { username :: String
-  , isSuperUser :: Bool
-  , host :: String
-  , currentDir :: String
-  } deriving Eq
+  { username :: String, isSuperUser :: Bool, host :: String, currentDir :: String} deriving Eq
 
 type EnvironmentM = Reader Environment
 
 formatUserName :: EnvironmentM String
-formatUserName = undefined
-  
+formatUserName = do 
+  nameMesage <- name
+  isSuperMesage <- super 
+  hostMesage <- hostm 
+  currentDirMesage <- currentDir
+  return $ [nameMesage, isSuperMesage, hostMesage, currentDirMesage]
+
 formatHost :: EnvironmentM String
-formatHost = undefined
+formatHost = do 
+  x <- ask
+  if x == root 
+    then return $ "root"
+    else return $ username
 
 formatCurrentDir :: EnvironmentM String
-formatCurrentDir = undefined
+formatCurrentDir = do
+  x <- ask
+  return $ (currentDir x)
 
 formatPrompt :: EnvironmentM String
-formatPrompt = undefined
+formatPrompt = do
+  x <- ask
+  return $ "{" ++ username ++ "}@{" ++ host ++"}:{" ++ currentDir ++ "}"
+
+
